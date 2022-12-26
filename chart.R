@@ -1,6 +1,7 @@
 library(ggplot2)
 library(dplyr)
 library(readr)
+library(ggtext)
 
 df = read_csv("dataset.csv")
 
@@ -105,10 +106,23 @@ df %>%
 
 
 # Getting only useful labels
+first_value <- df %>% 
+  filter(category == "Not working and not studying",
+         year == 2016)
+
+last_value <- df %>% 
+  filter(category == "Not working and not studying",
+         year == 2020)
+
+y_axis_breaks <- c(23.7, 50, 75, 100)
+y_axis_custom <- y_axis_breaks == 23.7
+
 df %>% 
-  ggplot(aes(x=year, y=value, fill=category_factor_v2)) +
-  geom_area() +
-  geom_text(aes(label=value), position=position_stack(vjust=0.5)) +
+  ggplot(aes(x=year, y=value)) +
+  geom_area(aes(fill=category_factor_v2)) +
+  geom_text(data=last_value, aes(x=year, y=value), label="29.3%",
+            position=position_stack(vjust=1), hjust=-0.15,
+            size=4, fontface="bold", colour=my_colors$axis) +
   scale_fill_manual(values=category_colours) +
   labs(title=paste("Youngsters percentage between 15 and 29 years old per",
                    "\nwork relation and studies, Brazil 2016-2020"),
@@ -116,7 +130,11 @@ df %>%
        y="Youngsters percentage",
        fill="") +
   theme_simple() +
-  scale_x_discrete(expand=c(0,0), limits=c(2016, 2020)) +
-  scale_y_continuous(expand=c(0,0), labels=c("", "25%", "50%", "75%", "100%")) +
+  scale_x_discrete(expand=c(0,0,0,.7), limits=c(2016, 2020)) +
+  scale_y_continuous(expand=c(0,0), 
+                     breaks=y_axis_breaks,
+                     labels=c("23.7%", "50%", "75%", "100%")) +
   theme(axis.line.x=element_blank(),
-        axis.ticks.x=element_blank())
+        axis.ticks.x=element_blank(),
+        axis.text.y=element_markdown(face = ifelse(y_axis_custom, "bold", "plain"),
+                                     size = ifelse(y_axis_custom, 10.5, 9)))

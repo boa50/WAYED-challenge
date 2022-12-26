@@ -167,3 +167,36 @@ df %>%
         axis.ticks.x=element_blank(),
         axis.text.y=element_markdown(face = ifelse(y_axis_custom, "bold", "plain"),
                                      size = ifelse(y_axis_custom, 10.5, 9)))
+
+
+# Adjusting colors to focus on adverse values
+category_colours_v2 <- list("Working and studying" = "#eeeeee",
+                         "Working and not studying" = "#e0e0e0",
+                         "Not working and studying" = "#c2c2c2",
+                         "Not working and not studying" = "#ff7043")
+
+df %>% 
+  ggplot(aes(x=year, y=value)) +
+  geom_area(aes(fill=category_factor_v2), show.legend=FALSE) +
+  geom_text(data=legend_labels, aes(x=year, y=value, label=category),
+            position=position_stack(vjust=.5), size=3.5,
+            colour=c("black", rep(my_colors$title, 3))) +
+  geom_text(data=last_value, aes(x=year, y=value), label="29.3%",
+            position=position_stack(vjust=1), hjust=-0.15,
+            size=4, fontface="bold", colour="black") +
+  scale_fill_manual(values=category_colours_v2) +
+  labs(title=paste("Youngsters percentage between 15 and 29 years old per",
+                   "\nwork relation and studies, Brazil 2016-2020"),
+       x="",
+       y="Youngsters percentage",
+       fill="") +
+  theme_simple() +
+  scale_x_discrete(expand=c(0,0,0,.7), limits=c(2016, 2020)) +
+  scale_y_continuous(expand=c(0,0), 
+                     breaks=y_axis_breaks,
+                     labels=c("23.7%", "50%", "75%", "100%")) +
+  theme(axis.line.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.text.y=element_markdown(face=ifelse(y_axis_custom, "bold", "plain"),
+                                     size=ifelse(y_axis_custom, 10.5, 9),
+                                     colour=ifelse(y_axis_custom, "black", my_colors$axis)))

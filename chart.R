@@ -6,7 +6,7 @@ library(ggtext)
 df = read_csv("dataset.csv")
 
 category_order <- c("Not working and studying",
-                 "Not working and not studying",
+                 "Neither working nor studying",
                  "Working and studying",
                  "Working and not studying")
 
@@ -26,7 +26,7 @@ df %>%
 category_colours <- list("Working and studying" = "#eeeeee",
                          "Working and not studying" = "#e0e0e0",
                          "Not working and studying" = "#bdbdbd",
-                         "Not working and not studying" = "#1976d2")
+                         "Neither working nor studying" = "#1976d2")
 
 df %>% 
   ggplot(aes(x=year, y=value, fill=category_factor)) +
@@ -43,7 +43,7 @@ df %>%
 category_order_v2 <- c("Working and studying",
                         "Working and not studying",
                         "Not working and studying",
-                        "Not working and not studying")
+                        "Neither working nor studying")
 
 category_factor_v2 <- factor(df$category, levels=category_order_v2)
 
@@ -107,11 +107,11 @@ df %>%
 
 # Getting only useful labels
 first_value <- df %>% 
-  filter(category == "Not working and not studying",
+  filter(category == "Neither working nor studying",
          year == 2016)
 
 last_value <- df %>% 
-  filter(category == "Not working and not studying",
+  filter(category == "Neither working nor studying",
          year == 2020)
 
 y_axis_breaks <- c(23.7, 50, 75, 100)
@@ -173,7 +173,7 @@ df %>%
 category_colours_v2 <- list("Working and studying" = "#eeeeee",
                          "Working and not studying" = "#e0e0e0",
                          "Not working and studying" = "#c2c2c2",
-                         "Not working and not studying" = "#ff7043")
+                         "Neither working nor studying" = "#ff7043")
 
 df %>% 
   ggplot(aes(x=year, y=value)) +
@@ -200,3 +200,36 @@ df %>%
         axis.text.y=element_markdown(face=ifelse(y_axis_custom, "bold", "plain"),
                                      size=ifelse(y_axis_custom, 10.5, 9),
                                      colour=ifelse(y_axis_custom, "black", my_colors$axis)))
+
+# Improving textual information
+df %>% 
+  ggplot(aes(x=year, y=value)) +
+  geom_area(aes(fill=category_factor_v2)) +
+  geom_text(data=last_value, aes(x=year, y=value), label="29.3%",
+            position=position_stack(vjust=1), hjust=-0.15,
+            size=4, fontface="bold", colour="black") +
+  scale_fill_manual(values=category_colours_v2) +
+  labs(title="Youngsters are losing interest in work and study",
+       subtitle=paste("The number of youngsters between 15 and 29 years old that",
+                      "are neither working nor studying increased \nin the last",
+                      "years in Brazil"),
+       y="Youngsters") +
+  theme_simple() +
+  scale_x_discrete(expand=c(0,0,0,.7), limits=c(2016, 2020)) +
+  scale_y_continuous(expand=c(0,0), 
+                     breaks=y_axis_breaks,
+                     labels=c("23.7%", "50%", "75%", "100%")) +
+  theme(axis.line.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.text.y=element_markdown(face=ifelse(y_axis_custom, "bold", "plain"),
+                                     size=ifelse(y_axis_custom, 10.5, 9),
+                                     colour=ifelse(y_axis_custom, "black", my_colors$axis)),
+        legend.position="bottom",
+        legend.title=element_blank(),
+        legend.key.size=unit(0.55, "cm"),
+        legend.text=element_text(colour=my_colors$axis, size=9),
+        axis.title.x=element_blank(),
+        plot.subtitle=element_text(colour=my_colors$axis, margin=margin(b=15)),
+        legend.margin=margin(t=0),
+        legend.box.margin = margin(l=-80),
+        plot.margin = margin(t=5, r=-20, b=5, l=5))

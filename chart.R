@@ -67,7 +67,7 @@ my_colors <- list(
 
 theme_simple <- function() {
   theme_classic() +
-    theme(plot.title = element_text(hjust = 0, colour = my_colors$title),
+    theme(plot.title = element_markdown(hjust = 0, colour = my_colors$title),
           plot.title.position = "plot",
           axis.line = element_line(colour = my_colors$axis),
           axis.ticks = element_line(colour = my_colors$axis),
@@ -209,11 +209,11 @@ df %>%
             position=position_stack(vjust=1), hjust=-0.15,
             size=4, fontface="bold", colour="black") +
   scale_fill_manual(values=category_colours_v2) +
-  labs(title="Youngsters are losing interest in work and study",
+  labs(title="Youngsters are **<span style='color:#ff7043;'>losing interest</span>** in work and study",
        subtitle=paste("The number of youngsters between 15 and 29 years old that",
                       "are neither working nor studying increased \nin the last",
                       "years in Brazil"),
-       y="Youngsters") +
+       y="Youngsters percentage") +
   theme_simple() +
   scale_x_discrete(expand=c(0,0,0,.7), limits=c(2016, 2020)) +
   scale_y_continuous(expand=c(0,0), 
@@ -229,6 +229,7 @@ df %>%
         legend.key.size=unit(0.55, "cm"),
         legend.text=element_text(colour=my_colors$axis, size=9),
         axis.title.x=element_blank(),
+        axis.title.y=element_text(hjust=1.05),
         plot.subtitle=element_text(colour=my_colors$axis, margin=margin(b=15)),
         legend.margin=margin(t=0),
         legend.box.margin = margin(l=-80),
